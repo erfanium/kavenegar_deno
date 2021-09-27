@@ -34,6 +34,18 @@ export interface InfoResult {
   type: string;
 }
 
+// deno-lint-ignore no-explicit-any
+function deleteBadValues(obj: any) {
+  for (const key in obj) {
+    const value = obj[key];
+    if (value === null) {
+      delete obj[key];
+      continue;
+    }
+    if (value === undefined) delete obj[key];
+  }
+}
+
 export class Kavenegar {
   baseUrl = "https://api.kavenegar.com/v1";
   apikey: string;
@@ -70,6 +82,7 @@ export class Kavenegar {
   }
 
   async verifyLookup(params: VerifyLookupParams): Promise<VerifyLookupResult> {
+    deleteBadValues(params);
     const result = await this.callApi<VerifyLookupResult>(
       "verify/lookup",
       params,
